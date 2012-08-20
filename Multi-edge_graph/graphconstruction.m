@@ -1,4 +1,6 @@
-function[] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
+function[resmat] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
+    
+    
     
     %Graph construction, we will have T tvnum by tvnum matrix
     
@@ -29,7 +31,13 @@ function[] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
     for i = 1: t_vnum,
         for j = 1: KNN,
             idxj = IDX(i, j);
-            
-           
+            tempsep = 1;
+            for k = 1: T,
+                resmat{k}(i, j) = +...
+                1/2*max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,i) , 0) +...
+                max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,idxj) , 0);
+            end;
+        end;
     end;
-     
+    
+    
