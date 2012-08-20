@@ -1,4 +1,4 @@
-function[resmat] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
+function[respmat, labeldiff] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
     
     
     
@@ -25,17 +25,28 @@ function[resmat] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel)
     %
     respmat = cell(1, T);
     for i = 1: T,
-        respmat{i} = zeros(t_vnum, t_vnum);
+        respmat{i} = zeros(t_vnum, KNN);
     end;
+    labeldiff = zeros(t_vnum, KNN);
+    %Calculate the label deviation
+    %===============================================
+    D = zeros(t_vnum, t_vnum);
+    L = zeros(t_vnum, t_vnum);
+    D = (testlabel(:,1:t_vnum))'*testlabel(:,1:t_vnum);
+
+    
+    
     
     for i = 1: t_vnum,
         for j = 1: KNN,
             idxj = IDX(i, j);
             tempsep = 1;
             for k = 1: T,
-                resmat{k}(i, j) = +...
-                1/2*max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,i) , 0) +...
-                max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,idxj) , 0);
+                respmat{k}(i, j) = +...
+                1/2*max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,i) , -9999999999999) +...
+                max(W{k}(tempsep:tempsep+fdim(k)-1)'*t_feavec(tempsep:tempsep+fdim(k)-1,idxj) , -999999999999);
+            
+                labeldiff(i, j) = D(i, idxj);
             end;
         end;
     end;
