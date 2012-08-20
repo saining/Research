@@ -40,14 +40,14 @@ end;
 D = zeros(vnum, vnum);
 L = zeros(vnum, vnum);
 D = (testlabel(:,1:vnum))'*testlabel(:,1:vnum);
-L = repmat(diag(D),1,vnum);
-D = L - D;
-
+L = diag(diag(D));
 
 %Find the K-nearest neighbor of each vertex
 KNN = 5;
-IDX = knnsearch(feavec',feavec', KNN);
+%IDX = myknnsearch(feavec',feavec', KNN);
 %IDX is vnum by K
+
+RIDX = randperm(vnum);
 
 %Begin to optimize with CVX
 %===============================================
@@ -64,7 +64,8 @@ cvx_begin
     pairs = [-1 -1];
     for i = 1 : vnum,
             for j = 1 : KNN,
-             idxj = IDX(i, j);
+                idxj = RIDX(j);
+            
              tempsep = 1;
 %              if ~ismember([i idxj], pairs, 'rows') && ~ismember([idxj i], pairs, 'rows'),
 %                  pairs = [pairs; [i idxj]];
@@ -75,13 +76,19 @@ cvx_begin
                 
              for k = 1 : T,
                     %fprintf('the %d th edge\n',k);
-                    regvec(k) = D(i,idxj)/length(labels{i})*...
-                                w(tempsep:tempsep+fdim(k)-1)'*feavec(tempsep:tempsep+fdim(k)-1,i)+...
-                                D(idxj,i)/length(labels{idxj})*...
-                                w(tempsep:tempsep+fdim(k)-1)'*feavec(tempsep:tempsep+fdim(k)-1,idxj);
+                    regvec(k) = (1-D(i,idxj)/(L(i,i)+L(idxj,idxj)-D(i,idxj)))*...
+                                (w(tempsep:tempsep+fdim(k)-1)'*feavec(tempsep:tempsep+fdim(k)-1,i)+...
+                                w(tempsep:tempsep+fdim(k)-1)'*feavec(tempsep:tempsep+fdim(k)-1,idxj));
                     tempsep = tempsep+fdim(k);
                 end;
                 objv = objv + max(1/2*(abs(regvec)+regvec));
+                             
+                
+                tempsep = 1;
+                for k  = 1:T,
+                    objv = objv + norm(w(tempsep:tempsep+fdim(k)-1),2);
+                    tempsep = tempsep+fdim(k);
+                end;
                 %fprintf('the %d th j\n',j);
             end;
             fprintf('the %d th i\n',i);

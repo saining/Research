@@ -7,7 +7,7 @@ load('labellist');
 %feature types:
 T = 4; %CH/CORR/EDH/WT
 %subsize = size(testlabel,2);
-subsize = 6000;
+subsize = 100;
 fea = cell(1,T);
 t_fea = cell(1,T);
 
@@ -44,3 +44,6 @@ W = modeltraining(T, l_vnum, fea, testlabel);
 
 fus = zeros(t_vnum, t_vnum);
 fus = max(max(max(RES{1}, RES{2}),RES{3}), RES{4});
+
+[sb,idx] = max(fus+fus',[],2);
+[sb2,idx2] = max(labeldiff+labeldiff',[],2);
