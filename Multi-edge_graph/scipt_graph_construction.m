@@ -7,7 +7,7 @@ load('labellist');
 %feature types:
 T = 4; %CH/CORR/EDH/WT
 %subsize = size(testlabel,2);
-subsize = 100;
+subsize = 10;
 fea = cell(1,T);
 t_fea = cell(1,T);
 
