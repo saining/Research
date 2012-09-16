@@ -1,0 +1,21 @@
+clear all;
+clc;
+
+
+dimX = [100, 80];
+dimP = [200, 100];
+dimY = 30;
+
+%randn('state',0);
+[X,P] = randprob(dimX, dimP);
+parameters(X,P);
+%Y0 = guess(dimY);
+%Y0 = randn(100,30);
+x = F(Y0);
+a = dF_check(Y0);
+b = dF(Y0);
+H = Y0;
+c = ddF_check(Y0,H);
+d = ddF(Y0,H);
+
+%[fn, Yn] = sg_min(Y0,'prcg','euclidean');

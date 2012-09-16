@@ -7,7 +7,7 @@ load('labellist');
 %feature types:
 T = 4; %CH/CORR/EDH/WT
 %subsize = size(testlabel,2);
-subsize = 10;
+subsize = 1000;
 fea = cell(1,T);
 t_fea = cell(1,T);
 
@@ -39,11 +39,14 @@ t_fea{4}(size(t_fea{4},1),:)=[];
 [c_num, l_vnum] = size(testlabel(:, 1:subsize));
 t_vnum = 2*l_vnum;
 
-W = modeltraining(T, l_vnum, fea, testlabel);
-[RES, labeldiff] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel);
+%W = modeltraining(T, l_vnum, fea, testlabel);
+W2 = PdPf(T, l_vnum, fea, testlabel);
 
-fus = zeros(t_vnum, t_vnum);
-fus = max(max(max(RES{1}, RES{2}),RES{3}), RES{4});
+%[RES, labeldiff] = graphconstruction(W, T, l_vnum, t_vnum, t_fea, testlabel);
+%[RES, labeldiff] = graphconstruction(W2, T, l_vnum, t_vnum, t_fea, testlabel);
 
-[sb,idx] = max(fus+fus',[],2);
-[sb2,idx2] = max(labeldiff+labeldiff',[],2);
+%fus = zeros(t_vnum, t_vnum);
+%fus = max(max(max(RES{1}, RES{2}),RES{3}), RES{4});
+
+%[sb,idx] = max(fus+fus',[],2);
+%[sb2,idx2] = max(labeldiff+labeldiff',[],2);
