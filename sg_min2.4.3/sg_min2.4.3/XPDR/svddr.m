@@ -39,9 +39,17 @@ dimY = ceil(dimX(1)*factor);
 randn('state',0);
 X = xvec;
 P = sparse(pmat);
+%[X,P] = randprob(dimX, dimP);
+parameters(X, P);
+Y0 = guess(dimY);
 
-[Up,Sp,~] = svd(X,dimY);
-Y = Up * Sp';
+disp('************************Begin sigmin**************\n');
+tic
+[fn, Yn] = sg_min(Y0,'prcg','euclidean',0.1, 0.1);
+toc
 
-
+disp('************************Finish sigmin**************\n');
+resim = P*Yn*Yn'*X;
+resim = reshape(resim,size(oo1,1),size(oo1,2));
+imshow(resim);
 

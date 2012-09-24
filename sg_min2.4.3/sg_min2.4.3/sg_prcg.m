@@ -32,7 +32,7 @@ function [fn,Yn]= sg_prcg(Y)
     end
 
     reset = 1;
-    while (mag>geps) | (abs(oldf/f-1)>feps) | reset
+    while N <= 10 &( (mag>geps) | (abs(oldf/f-1)>feps) | reset)
 	N= N+1;
 
 	gradsat = (mag<=geps);

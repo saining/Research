@@ -17,15 +17,15 @@ function Y = guess(dimY)
     p = dimY;
  	%Y = pinv(inP)*inP*inX*pinv(inX)*rand(n,p);
     %load res;
-    %Y = Yn+ rand(n,p);
-  	%[Y,r1] = qr(Y,0);
+    Y = randn(n,p);
+  	[Y,r1] = qr(Y,0);
 
     
-     Y = pinv(inP)*inP*inX*pinv(inX);
+     %Y = pinv(inP)*inP*inX*pinv(inX);
      %Y = zeros(n,p);
      %Y = qr(Y);
-     [Up,Sp,~] = svds(Y,p);
-      Y = Up * Sp';
-      temp = Y'*Y;
+     %[Up,Sp,~] = svds(Y,p);
+     % Y = Up * Sp';
+     % temp = Y'*Y;
     
     
