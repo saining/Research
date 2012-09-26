@@ -17,7 +17,7 @@
 %
 %
 %   $Name:  $ $Revision: 1.1 $  $Date: 2003-12-23 07:27:55 $
-%
+%      
 function [] = gfdemo02;
 
 disp('Step 1: GENERATE TEST IMAGE');
@@ -33,7 +33,7 @@ f = 0.2;
 theta = 0;
 gamma = 1;
 eta = 1;
-g = gfcreatefilter2(f,theta,gamma,eta,[62 62]);
+g = gfcreatefilter2(f,theta,gamma,eta,[60 60]);
 disp('Real part of the filter');
 imagesc(real(g));
 colormap(gray);
@@ -42,7 +42,7 @@ input('<RETURN>');
 % filter signal with given filter and plot magnitude
 disp('If the image i(x,y) and filter g(x,y) are now convolved conv(g,x)');
 disp('we can calculate the magnitudes of the filter response.');
-resp1 = conv2(g,img,'same');
+resp1 = conv2(img,g,'same');
 imagesc(abs(resp1).^2);
 colormap(gray);
 colorbar;
