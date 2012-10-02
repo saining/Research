@@ -6,7 +6,7 @@ function [filterMatrix, filteredFea] = ConstructFilterMatrix(filterType, data)
 		    gopt.theta = 0;
 		    gopt.gamma = 1;
 		    gopt.eta = 1;
-		    gopt.size = [25 25];
+		    gopt.size = [15 15];
 
 		    [filterMatrix, filteredFea] = GaborFilter(data, gopt);
 		end

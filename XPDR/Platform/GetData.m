@@ -35,8 +35,7 @@ Data = 'Yale' ;                                 % YaleÊý¾Ý,15Àà£¬Ã¿Àà11¸öÑù±¾£¬¹
 
 %% Reconstruction Methods
 %ReconstructionMethod = 'PCA';
-%ReconstructionMethod = 'XPDR';
-ReconstructionMethod = 'ALM_XPDR';
+ReconstructionMethod = 'XPDR';
 
 %% Feature Filter
 LinearFilterType = '2D-GaborFilter';
@@ -59,7 +58,7 @@ Classifier = 'kNN' ;
 
 
 %% Random splits
-splits = 3;                                    
+splits = 10;                                    
 
 %% ½µÎ¬·½·¨Î¬ÊýÉèÖÃ
 switch Data
@@ -168,91 +167,12 @@ for ii = 1: length( Train )
         
         % Get the Reconstructed Image
         ReducedDim = 50;
+        fprintf('Reddim: %d %d th split\n', ReducedDim, s);
         % 0 means use full-rank;
         [fea_Train] = Reconstruction(ReconstructionMethod, fea_Train, ReducedDim);
         
         ResultsMat = [ '.\Features\fea_Train' num2str(i) 'Train_' Data '_' ReconstructionMethod '_ReducedDim=' num2str(ReducedDim) '_s=' num2str(splits) ] ; % '_D=[' num2str(D) ']_s=' '
         disp(ResultsMat);
         save( ResultsMat , 'fea_Train','ReducedDim' ) ;
-        
-        % Feature Extraction with Linear Filter
-         [fea_Train] = LinearFilter(LinearFilterType, fea_Train);
-        
-        
-        % ½µÎ¬
-        [ Yfea_Train , Yfea_Test redDim] = FeatureExtraction( FeatureExtractionMethod , fea_Train , gnd_Train , fea_Test ) ;
-        
-%         save ARRandProj6 Yfea_Train Yfea_Test
-%         load ARRandProj6
-        % ·ÖÀà
-
-
-        if strcmp( ReconstructionMethod , 'PCA' )
-                Accuracy(s) = eval( [ Classifier '( fea_Train , gnd_Train , fea_Test , gnd_Test )' ] ) ;
-        else
-            for dd = 1 : length_D
-                d = D(dd) ;
-                tic
-                    Accuracy(s,dd) = eval( [ Classifier '( Yfea_Train(1:d,:) , gnd_Train , Yfea_Test(1:d,:) , gnd_Test )' ] ) ;         
-                toc
-    %             fprintf('********************************************************************\n') ;
-    %             fprintf('dim = %d %f\n', d , Accuracy(s,dd) ) ;
-            end
-        end
     end
-    
-    ave_Acc = mean( Accuracy , 1 ) ;
-    [max_Acc,dd] = max( ave_Acc ) ;
-    max_Dim = D( dd ) ;
-    std_Acc = std( Accuracy(:,dd) ) ;
-
-    fprintf( fid , 'Dim =\t\t' ) ;
-    for dd = 1 : length_D
-        fprintf( fid , '\t%5d' , D(dd) ) ;
-    end
-    fprintf( fid , '\n' ) ;
-    for s = 1 : splits
-        fprintf( fid, 's = %2d\t%8s' , s , FeatureExtractionMethod ) ;
-        for dd = 1 : length_D
-            d = D(dd) ;
-            fprintf( fid , '\t%.2f ' , Accuracy(s,dd)*100 ) ;            
-        end
-        fprintf( fid , '\n' ) ;
-    end    
-    fprintf( fid , 'ave_Acc %8s ' , FeatureExtractionMethod ) ;
-    for dd = 1 : length_D
-        d = D(dd) ;
-        fprintf( fid , '\t%.2f ' , ave_Acc(dd)*100 ) ;
-    end    
-    fprintf( fid , '\n' ) ;
-    fprintf( fid , '%dTrain max_Acc¡Àstd_Acc = %.2f¡À%.2f , max_Dim = %d\n' , i , max_Acc*100 , std_Acc*100 , max_Dim  ) ;
-%     fprintf( fid , '%dTrain data is done!\n',i) ;
-    
-    %% ±£´æ½á¹ûµ½MATÎÄ¼þ
-%     ResultsMat = [ '.\Results\' Data '\' num2str(i) 'Train_' Classifier '_' FeatureExtractionMethod '_D=[1-74]_s=' num2str(splits) ] ; % '_D=[' num2str(D) ']_s='     _D=[1-89]_s=
-%     ResultsMat = [ '.\Results\' Data '\' num2str(i) 'Train_' Classifier '_' FeatureExtractionMethod '_D=[' num2str(D) ']_s=' num2str(splits) ] ; % '_D=[' num2str(D) ']_s='
-%     save( ResultsMat , 'Data' , 'Train' , 'splits' , 'D' , 'FeatureExtractionMethod' , 'Classifier' , 'Accuracy' , 'ave_Acc' , 'max_Acc' , 'max_Dim' , 'std_Acc' ) ;
 end
-
-
-% load E:\Work\LRRC\Results\YaleB\30Train_SRC_lu_SPAMS_PCA_D=[70-89]_s=1  % YaleB
-% load 6Train_SRC_lu_SPAMS_PCA_D=[70-89]_s=1    % Yale
-
-
-% plot(D,ave_Acc,'b')
-% hold on
-% load E:\Work\LRRC\Results\YaleB\30Train_KLRC_PCA_D=[70-89]_s=1  % YaleB
-% 
-% % load 6Train_KLRC_PCA_D=[70-89]_s=1
-% plot(D,ave_Acc,'r')
-% legend('SRC','KLRC')
-% hold off
-
-
-
-fprintf('\n') ;
-if fid ~= 1
-    fclose(fid) ;
-end
-fprintf( [ mfilename(currentpath) ' is done!\n' ] ) ;
-% rmpath( AddedPath ) ;
